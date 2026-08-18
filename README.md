@@ -134,7 +134,7 @@ aml-webapp/
 
 Run the test suite to verify all components are working:
 
-## 📡 API Endpoints
+## API Endpoints
 Endpoint	Method	Description
 /	GET	Web interface (dashboard)
 /predict	POST	Analyze a single transaction
@@ -142,7 +142,7 @@ Endpoint	Method	Description
 /export-csv	GET	Download predictions as CSV
 /health	GET	Check service and model status
 
-## 🧰 Technologies Used
+## Technologies Used
 Layer	Technologies
 Backend	Python, Flask, Werkzeug, Gunicorn
 Machine Learning	XGBoost, Scikit-Learn, Pandas, NumPy
@@ -151,21 +151,19 @@ DevOps	Docker, Docker Compose, GitHub Actions
 Deployment	Render.com
 Testing	Pytest
 
-📄 License
+## License
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-🙏 Acknowledgments
+## Acknowledgments
 IBM for providing the AML transaction dataset
-
 XGBoost library developers for the gradient boosting framework
-
 Flask framework team for the web application framework
 
 Course Mentor: Mr. Mikiyas Tadesse for guidance and support throughout the project
 
 ## 👨‍💻 Author
 Nathenael Ermias
-Final Year Project | AML Suspicious Transaction Detection
+CTC program Project | AML Suspicious Transaction Detection
 
 📧 Contact:nathenaelermias13@gmail.com
 🔗 GitHub: https://github.com/Nathenael11
