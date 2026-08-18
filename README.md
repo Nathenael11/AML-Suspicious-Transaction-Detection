@@ -7,7 +7,7 @@
 
 ## Overview
 
-AML Shield is a web application I built for my final year project. It uses an
+AML Shield is a web application I built for my ctc project. It uses an
 XGBoost model trained on the IBM AML dataset (5.07 million transactions) to
 flag transactions that look like money laundering. You submit a transaction
 (or a batch of them via CSV) and it returns a risk score along with the
