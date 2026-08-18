@@ -87,12 +87,12 @@ python run.py
 
 # Open browser to http://localhost:5000
 
-🐳 Run with Docker
+## 🐳 Run with Docker
 
 docker build -t aml-shield .
 docker run -p 5000:5000 aml-shield
 
-📁 Project Structure
+## 📁 Project Structure
 aml-webapp/
 ├── app/           # Flask backend (routes, models, feature engineering)
 ├── static/        # CSS, JavaScript, logo
@@ -103,10 +103,10 @@ aml-webapp/
 ├── Dockerfile     # Container setup
 └── requirements.txt
 
-🧪 Running Tests
+## 🧪 Running Tests
 pytest tests/ -v
 
-📡 API Endpoints
+## 📡 API Endpoints
 Endpoint	Method	Description
 /	GET	Web interface
 /predict	POST	Analyze a transaction
@@ -114,25 +114,22 @@ Endpoint	Method	Description
 /export-csv	GET	Download predictions
 /health	GET	Check service status
 
-🧰 Technologies Used
+## 🧰 Technologies Used
 Backend: Python, Flask, XGBoost, Scikit-Learn, Pandas, NumPy
-
 Frontend: HTML5, CSS3, JavaScript
-
 DevOps: Docker, GitHub Actions
-
 Deployment: Render.com
 
-📄 License
+## 📄 License
 MIT License - see LICENSE file for details.
 
-🙏 Acknowledgments
+## 🙏 Acknowledgments
 IBM for the AML dataset
-
 XGBoost library developers
-
 Flask framework team
-course Mentor Mr.Mikiyas Tadesse
+
+##course Mentor
+Mr.Mikiyas Tadesse
 
 ## Author
 Nathenael Ermias
