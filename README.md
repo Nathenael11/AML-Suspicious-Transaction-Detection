@@ -74,7 +74,7 @@ User → Web Dashboard → Flask API → Feature Engineering (56 features) → X
 
 ## 🛠 Quick Start
 
-```bash
+
 # Clone the repository
 git clone https://github.com/Nathenael11/AML-Suspicious-Transaction-Detection.git
 cd aml-webapp
@@ -91,5 +91,87 @@ python run.py
 
 docker build -t aml-shield .
 docker run -p 5000:5000 aml-shield
----
 
+---
+## 📁 Project Structure
+
+aml-webapp/
+├── app/ # Flask backend (routes, models, feature engineering)
+│ ├── init.py
+│ ├── routes.py
+│ ├── models.py
+│ ├── utils.py
+│ └── feature_engineering.py
+├── static/ # CSS, JavaScript, logo
+│ ├── css/
+│ ├── js/
+│ └── img/
+├── templates/ # HTML dashboard
+│ └── index.html
+├── models/ # Trained XGBoost model files
+│ ├── model.pkl
+│ └── feature_names.pkl
+├── tests/ # Unit tests
+│ └── test_app.py
+├── images/ # Screenshots for README
+│ ├── dashboard.png
+│ ├── normal.png
+│ ├── suspicious.png
+│ ├── batch.png
+│ └── audit.png
+├── AML_Suspicious_Transaction_Detection.ipynb # Jupyter Notebook (training code)
+├── run.py # Application entry point
+├── requirements.txt # Python dependencies
+├── Dockerfile # Container setup
+├── docker-compose.yml # Docker orchestration
+├── deploy.sh # Deployment script
+├── .github/workflows/ # CI/CD pipeline
+├── LICENSE # MIT License
+└── README.md # Project documentation
+
+
+## 🧪 Running Tests
+
+Run the test suite to verify all components are working:
+
+## 📡 API Endpoints
+Endpoint	Method	Description
+/	GET	Web interface (dashboard)
+/predict	POST	Analyze a single transaction
+/api/history	GET	Fetch prediction history (last 100)
+/export-csv	GET	Download predictions as CSV
+/health	GET	Check service and model status
+
+## 🧰 Technologies Used
+Layer	Technologies
+Backend	Python, Flask, Werkzeug, Gunicorn
+Machine Learning	XGBoost, Scikit-Learn, Pandas, NumPy
+Frontend	HTML5, CSS3, Vanilla JavaScript
+DevOps	Docker, Docker Compose, GitHub Actions
+Deployment	Render.com
+Testing	Pytest
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+🙏 Acknowledgments
+IBM for providing the AML transaction dataset
+
+XGBoost library developers for the gradient boosting framework
+
+Flask framework team for the web application framework
+
+Course Mentor: Mr. Mikiyas Tadesse for guidance and support throughout the project
+
+## 👨‍💻 Author
+Nathenael Ermias
+Final Year Project | AML Suspicious Transaction Detection
+
+📧 Contact:nathenaelermias13@gmail.com
+🔗 GitHub: https://github.com/Nathenael11
+🌐 Live Demo: https://aml-suspicious-transaction-detection.onrender.com
+
+⭐ Support
+If you found this project helpful, please give it a star ⭐ on GitHub!
+
+© 2026 Nathenael Ermias. All Rights Reserved.
