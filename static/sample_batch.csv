@@ -1,0 +1,11 @@
+amount_paid,amount_received,payment_currency,receiving_currency,from_bank,to_bank,from_account,to_account,payment_format,hour_of_day,day_of_week
+150.00,150.00,USD,USD,Bank_Alpha,Bank_Beta,ACC_8000F4580,ACC_8000F5340,Credit Card,14,3
+9999.99,9999.99,USD,USD,Bank_Offshore,Bank_Offshore,ACC_8000EBD30,ACC_8000EBD30,Revalidation,3,6
+45000.00,38000.00,USD,EUR,Bank_Delta,Bank_Epsilon,ACC_100928,ACC_440211,Wire,10,1
+1200.50,1200.50,USD,USD,Bank_Alpha,Bank_Alpha,ACC_500112,ACC_500113,ACH,9,0
+9500.00,9500.00,USD,USD,Bank_Beta,Bank_Gamma,ACC_330199,ACC_992011,Cheque,16,2
+50000.00,42000.00,USD,JPY,Bank_Offshore,Bank_Zeta,ACC_HUB_99,ACC_RECV_44,Wire,2,6
+250.00,250.00,GBP,GBP,Bank_Uk,Bank_Uk,ACC_77102,ACC_77103,Credit Card,11,4
+18500.00,18500.00,EUR,EUR,Bank_Euro,Bank_Euro,ACC_99120,ACC_99121,Wire,15,5
+85000.00,72000.00,USD,CNY,Bank_Offshore,Bank_Asia,ACC_900011,ACC_881122,Wire,1,6
+300.00,300.00,USD,USD,Bank_Alpha,Bank_Beta,ACC_11029,ACC_11030,Cash,13,2

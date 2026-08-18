@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AML Shield - Real-Time XGBoost Anti-Money Laundering Transaction Risk Detection Application">
+  <title>AML Shield - Anti-Money Laundering Detection Engine</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="AML Shield Logo">
+      <div>
+        <span class="brand-title">AML SHIELD</span>
+        <span class="brand-tag">XGBoost v1.0</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('main.index') }}" class="nav-link active">Single Analysis</a>
+      <a href="{{ url_for('main.batch') }}" class="nav-link">Batch Analysis</a>
+    </div>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span>Model Active | Threshold: <strong>0.97</strong></span>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+
+    <!-- Top Two-Column Grid: Input Form & Results Display -->
+    <div class="grid-two-col">
+
+      <!-- Left Card: Transaction Input Form -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Transaction Details
+          </h2>
+          <div class="preset-btns">
+            <button type="button" class="btn-preset" id="btn-preset-normal">Normal</button>
+            <button type="button" class="btn-preset" id="btn-preset-suspicious">Suspicious</button>
+            <button type="button" class="btn-preset" id="btn-preset-mismatch">Mismatch</button>
+          </div>
+        </div>
+
+        <form id="aml-form">
+          <div class="form-grid">
+            <!-- Sender Info -->
+            <div class="form-group">
+              <label for="from_bank">Sender Bank</label>
+              <input type="text" id="from_bank" name="from_bank" value="Bank_Alpha" required placeholder="e.g. Bank_A">
+            </div>
+
+            <div class="form-group">
+              <label for="from_account">Sender Account</label>
+              <input type="text" id="from_account" name="from_account" value="ACC_100928" required placeholder="e.g. ACC_1001">
+            </div>
+
+            <!-- Receiver Info -->
+            <div class="form-group">
+              <label for="to_bank">Receiver Bank</label>
+              <input type="text" id="to_bank" name="to_bank" value="Bank_Beta" required placeholder="e.g. Bank_B">
+            </div>
+
+            <div class="form-group">
+              <label for="to_account">Receiver Account</label>
+              <input type="text" id="to_account" name="to_account" value="ACC_884920" required placeholder="e.g. ACC_2002">
+            </div>
+
+            <!-- Amount Paid -->
+            <div class="form-group">
+              <label for="amount_paid">Amount Paid ($)</label>
+              <input type="number" step="0.01" id="amount_paid" name="amount_paid" value="12500.00" required min="0">
+            </div>
+
+            <div class="form-group">
+              <label for="payment_currency">Payment Currency</label>
+              <select id="payment_currency" name="payment_currency">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="CNY">CNY - Chinese Yuan</option>
+                <option value="OTHER">OTHER - Other Currency</option>
+              </select>
+            </div>
+
+            <!-- Amount Received -->
+            <div class="form-group">
+              <label for="amount_received">Amount Received ($)</label>
+              <input type="number" step="0.01" id="amount_received" name="amount_received" value="12500.00" required min="0">
+            </div>
+
+            <div class="form-group">
+              <label for="receiving_currency">Receiving Currency</label>
+              <select id="receiving_currency" name="receiving_currency">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="CNY">CNY - Chinese Yuan</option>
+                <option value="OTHER">OTHER - Other Currency</option>
+              </select>
+            </div>
+
+            <!-- Payment Format & Timestamp -->
+            <div class="form-group">
+              <label for="payment_format">Payment Format</label>
+              <select id="payment_format" name="payment_format">
+                <option value="Wire" selected>Wire Transfer</option>
+                <option value="ACH">ACH Transfer</option>
+                <option value="Cheque">Cheque / Check</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="Cash">Cash Deposit</option>
+                <option value="Revalidation">Revalidation</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="timestamp">Timestamp</label>
+              <input type="text" id="timestamp" name="timestamp" value="2026-08-18 10:30">
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-analyze">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            <span>Run Risk Inference</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Right Card: Risk Score & Analysis Results -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+            </svg>
+            Risk Analysis Scorecard
+          </h2>
+        </div>
+
+        <!-- Initial Placeholder State -->
+        <div id="result-placeholder" class="result-placeholder">
+          <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <p>Submit a transaction or select a preset scenario to evaluate XGBoost ML risk prediction.</p>
+        </div>
+
+        <!-- Active Result Card (Hidden by default) -->
+        <div id="result-content" class="result-active-content" style="display: none;">
+          
+          <!-- Radial Gauge Score -->
+          <div class="gauge-container">
+            <svg class="gauge-svg" viewBox="0 0 160 160">
+              <circle class="gauge-bg" cx="80" cy="80" r="70"></circle>
+              <circle id="gauge-fill" class="gauge-fill" cx="80" cy="80" r="70"></circle>
+            </svg>
+            <div class="gauge-text-group">
+              <div id="gauge-score-val" class="gauge-score">0.00</div>
+              <div class="gauge-label">Laundering Risk</div>
+            </div>
+          </div>
+
+          <!-- Alert Badge -->
+          <div id="alert-badge-container" style="text-align: center;">
+            <div id="alert-badge" class="alert-badge alert-low">
+              <span>Low Risk</span>
+            </div>
+          </div>
+
+          <!-- Recommendation Action Box -->
+          <div id="recommendation-box" class="recommendation-box low">
+            <div class="rec-header">Recommended Action</div>
+            <div id="rec-body-text" class="rec-body">
+              Pass transaction. Standard behavioral baseline.
+            </div>
+          </div>
+
+          <!-- Diagnostic Metrics -->
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 1rem;">
+            <span>Features Vector: <strong>56 Features</strong></span>
+            <span>Optimal Threshold: <strong>0.97</strong></span>
+            <span>Model: <strong>XGBoost v2.0</strong></span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom History Section -->
+    <div class="card history-section">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Audit History Trail (Last 100 Predictions)
+        </h2>
+        <div class="table-controls">
+          <button type="button" class="btn-export" id="btn-export-csv">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export to CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>From Account</th>
+              <th>To Account</th>
+              <th>Paid Amount</th>
+              <th>Recv Amount</th>
+              <th>Format</th>
+              <th>Risk Score</th>
+              <th>Alert Level</th>
+              <th>Decision</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <tr>
+              <td colspan="9" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                No predictions recorded yet. Run your first transaction above.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>AML Shield &copy; 2026 | Anti-Money Laundering Detection Engine | Trained on 5.07M Transactions | 386% PR-AUC Improvement</p>
+  </footer>
+
+  <!-- JavaScript Application Script -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

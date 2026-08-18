@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AML Shield - Batch CSV Anti-Money Laundering Transaction Risk Analytics">
+  <title>AML Shield - Batch CSV Analysis</title>
+
+  <!-- Google Fonts & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="AML Shield Logo">
+      <div>
+        <span class="brand-title">AML SHIELD</span>
+        <span class="brand-tag">XGBoost v1.0</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('main.index') }}" class="nav-link">Single Analysis</a>
+      <a href="{{ url_for('main.batch') }}" class="nav-link active">Batch Analysis</a>
+    </div>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      <span>Model Active | Threshold: <strong>0.97</strong></span>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container">
+
+    <!-- Header Section -->
+    <div class="batch-header-card">
+      <div>
+        <h1 class="batch-title">Batch Transaction Risk Engine</h1>
+        <p class="batch-subtitle">Upload CSV transaction datasets (up to 10,000 rows, max 10MB) for automated 56-feature XGBoost risk scoring.</p>
+      </div>
+      <a href="{{ url_for('main.download_sample_csv') }}" class="btn-preset" style="display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1rem;">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+        </svg>
+        Download Sample Template (CSV)
+      </a>
+    </div>
+
+    <!-- Drag and Drop Upload Card -->
+    <div class="card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+          </svg>
+          Upload CSV Dataset
+        </h2>
+      </div>
+
+      <!-- Dropzone Area -->
+      <div id="dropzone" class="dropzone">
+        <input type="file" id="batch-file-input" accept=".csv" style="display: none;">
+        <div class="dropzone-icon">
+          <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+        <p class="dropzone-text">Drag & drop your CSV file here or <span id="browse-trigger" class="browse-link">Browse Files</span></p>
+        <p class="dropzone-hint">Supports CSV files up to 10,000 rows (Max 10MB)</p>
+      </div>
+
+      <!-- File Info Box (Selected file details) -->
+      <div id="file-info-box" class="file-info-box" style="display: none;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <svg width="24" height="24" fill="none" stroke="var(--primary-teal)" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <div>
+            <div id="file-name" class="file-info-name">filename.csv</div>
+            <div id="file-meta" class="file-info-meta">0 KB • 0 Rows detected</div>
+          </div>
+        </div>
+        <button type="button" id="btn-remove-file" class="btn-preset" style="color: #fca5a5; border-color: rgba(239, 68, 68, 0.4);">Remove</button>
+      </div>
+
+      <!-- 5-Row Data Preview Table -->
+      <div id="preview-container" class="preview-container" style="display: none;">
+        <div class="preview-header">Data Preview (First 5 Rows)</div>
+        <div class="table-responsive">
+          <table class="preview-table">
+            <thead id="preview-thead"></thead>
+            <tbody id="preview-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Process Button -->
+      <button type="button" id="btn-process-batch" class="btn-submit" style="margin-top: 1.5rem;" disabled>
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        <span>Execute Batch Risk Inference</span>
+      </button>
+    </div>
+
+    <!-- Progress Card (Hidden until submitted) -->
+    <div id="batch-progress-card" class="card" style="display: none;">
+      <div class="card-header">
+        <h2 class="card-title">Processing Batch Dataset...</h2>
+        <span id="batch-progress-percent" style="font-weight: 700; color: var(--primary-teal);">0%</span>
+      </div>
+      <div class="progress-bar-track">
+        <div id="batch-progress-fill" class="progress-bar-fill"></div>
+      </div>
+      <p id="batch-progress-text" style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.75rem; text-align: center;">Reading transaction rows and building 56-feature vectors...</p>
+    </div>
+
+    <!-- Summary Metrics Cards (Hidden until completion) -->
+    <div id="batch-summary-grid" class="summary-cards-grid" style="display: none;">
+      <div class="summary-card">
+        <div class="summary-card-title">Total Processed</div>
+        <div id="stat-total" class="summary-card-val">0</div>
+        <div id="stat-time" class="summary-card-sub">Completed in 0.00s</div>
+      </div>
+
+      <div class="summary-card high-risk">
+        <div class="summary-card-title">High Risk (Suspicious)</div>
+        <div id="stat-high" class="summary-card-val">0</div>
+        <div id="stat-high-pct" class="summary-card-sub">0.0% of batch</div>
+      </div>
+
+      <div class="summary-card med-risk">
+        <div class="summary-card-title">Medium Risk (Warning)</div>
+        <div id="stat-med" class="summary-card-val">0</div>
+        <div class="summary-card-sub">Escalated for Review</div>
+      </div>
+
+      <div class="summary-card low-risk">
+        <div class="summary-card-title">Low Risk (Passed)</div>
+        <div id="stat-low" class="summary-card-val">0</div>
+        <div class="summary-card-sub">Normal Baseline</div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-card-title">Avg Risk Score</div>
+        <div id="stat-avg" class="summary-card-val">0.00</div>
+        <div class="summary-card-sub">PR-AUC Threshold: 0.97</div>
+      </div>
+    </div>
+
+    <!-- Results Table Section (Hidden until completion) -->
+    <div id="batch-results-card" class="card history-section" style="display: none;">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+          </svg>
+          Batch Risk Analysis Results
+        </h2>
+        <div class="table-controls">
+          <button type="button" id="btn-export-batch-csv" class="btn-export">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export Results (CSV)
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Row #</th>
+              <th>From Account</th>
+              <th>To Account</th>
+              <th>Paid Amount</th>
+              <th>Recv Amount</th>
+              <th>Format</th>
+              <th id="th-sort-score" class="sortable">Risk Score <span class="sort-icon">⇅</span></th>
+              <th id="th-sort-alert" class="sortable">Alert Level <span class="sort-icon">⇅</span></th>
+              <th>Action Recommendation</th>
+            </tr>
+          </thead>
+          <tbody id="batch-results-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>AML Shield &copy; 2026 | Anti-Money Laundering Detection Engine | Trained on 5.07M Transactions | 386% PR-AUC Improvement</p>
+  </footer>
+
+  <!-- JavaScript Application Script -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

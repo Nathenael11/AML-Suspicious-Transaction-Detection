@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  aml-shield-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aml_shield_webapp
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=aml-shield-production-secret-key-2026
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

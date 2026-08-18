@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="40" height="40">
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00b4d8" />
+      <stop offset="100%" stop-color="#0077b6" />
+    </linearGradient>
+    <linearGradient id="checkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#90e0ef" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+  </defs>
+  <!-- Outer Shield -->
+  <path d="M50 5 L85 20 V45 C85 70 50 92 50 92 C50 92 15 70 15 45 V20 Z" fill="url(#shieldGrad)" stroke="#48cae4" stroke-width="2"/>
+  <!-- Inner Glow Ring -->
+  <path d="M50 12 L78 24 V45 C78 65 50 83 50 83 C50 83 22 65 22 45 V24 Z" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+  <!-- Security Checkmark & Node Circuit lines -->
+  <path d="M36 48 L46 58 L66 36" fill="none" stroke="url(#checkGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="50" cy="28" r="3" fill="#ffffff" />
+</svg>
