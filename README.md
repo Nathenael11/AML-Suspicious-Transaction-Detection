@@ -128,3 +128,5 @@ finished product:
   Transactions for Anti-Money Laundering Models")
 - The XGBoost library
 - Flask
+## Author
+ Nathenael Ermias
