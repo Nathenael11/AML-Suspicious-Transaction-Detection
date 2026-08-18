@@ -183,7 +183,7 @@ MIT — see [LICENSE](LICENSE).
 **Nathenael Ermias**
 CTC Program Project — AML Suspicious Transaction Detection
 
-📧 nathenaelermias13@gmail.com
+📧 nathnaelermias@gmail.com
 🔗 [github.com/Nathenael11](https://github.com/Nathenael11)
 🌐 [Live demo](https://aml-suspicious-transaction-detection.onrender.com)
 
