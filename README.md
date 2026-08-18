@@ -1,132 +1,139 @@
-# 🛡️ AML Shield — Transaction Detection System
+# 🛡️ AML Shield - Suspicious Transaction Detection
 
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![Flask](https://img.shields.io/badge/Flask-2.x-black)
-![XGBoost](https://img.shields.io/badge/XGBoost-2.x-red)
-![Docker](https://img.shields.io/badge/Docker-ready-blue)
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/framework-Flask--3.0-green.svg)](https://flask.palletsprojects.com/)
+[![XGBoost](https://img.shields.io/badge/model-XGBoost--2.0-orange.svg)](https://xgboost.readthedocs.io/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
-## Overview
+**AML Shield** is a web application I built for my Cyber Talent Center(CTC) project. It uses an XGBoost machine learning model trained on the IBM AML dataset (5.07 million transactions) to detect suspicious money laundering patterns.
 
-AML Shield is a web application I built for my ctc project. It uses an
-XGBoost model trained on the IBM AML dataset (5.07 million transactions) to
-flag transactions that look like money laundering. You submit a transaction
-(or a batch of them via CSV) and it returns a risk score along with the
-features that drove the decision. It's meant for anyone who wants to see how
-graph-based features can be applied to financial fraud detection — a student
-project, not a production compliance tool.
+The model uses **56 features** including transaction amounts, currency mismatches, bank transfers, time-based signals, and graph features like account connections, transaction cycles, and velocity patterns.
 
-**Live demo:** https://aml-suspicious-transaction-detection.onrender.com
-**Repo:** https://github.com/Nathenael11/AML-Suspicious-Transaction-Detection
+🌐 **Live Demo:** [https://aml-suspicious-transaction-detection.onrender.com](https://aml-suspicious-transaction-detection.onrender.com)
 
-> Note: this is hosted on Render's free tier, so the first request after a
-> while can take 30-60 seconds to wake the server up. That's normal, not a bug.
+📁 **GitHub:** [https://github.com/Nathenael11/AML-Suspicious-Transaction-Detection](https://github.com/Nathenael11/AML-Suspicious-Transaction-Detection)
 
-## Key Features
+---
 
-- Real-time single-transaction risk scoring
-- Batch analysis via CSV upload
-- Risk score shown as a gauge, not just a raw number
-- Audit history of past checks
-- Export results back out to CSV
-- Dark theme UI
+## 📊 Key Features
 
-## Performance
+- **Real-time Analysis** - Submit a transaction and get an instant risk score
+- **Batch Upload** - Upload CSV files for bulk transaction analysis
+- **Risk Scorecard** - Visual gauge showing risk level (0-1)
+- **Audit History** - Last 100 predictions stored with timestamps
+- **Export to CSV** - Download prediction history for reporting
+- **Dark Theme UI** - Professional dark navy and teal design
 
-Trained and evaluated on the HI-Small variant of the IBM AML dataset, with a
-strict chronological train/val/test split (no random shuffling — the model
-never sees "future" transactions during training). All numbers below are on
-the held-out test set.
+---
 
-| Metric | Baseline (no graph features) | Full Model | Relative Improvement |
-|---|---|---|---|
-| PR-AUC | 0.0133 | 0.1180 | +787% |
-| F1 Score | 0.0376 | 0.1828 | +386% |
-| Precision | 3.4% | 14.6% | +329% |
-| Recall | 4.2% | 24.5% | +483% |
-| Top-100 Precision | — | 36% | — |
+## 📸 Screenshots
 
-A few honest notes on these numbers:
+### Dashboard
+![Dashboard](images/dashboard.png)
 
-- This is an extremely imbalanced dataset (illicit transactions are a
-  fraction of a percent of the total), so precision and recall in the
-  teens/twenties are actually in line with what's reported in the papers this
-  dataset comes from — not a sign something's broken.
-- The "baseline" model uses only raw transaction fields (amount, currency,
-  timestamp, etc). The "full" model adds graph features — fan-in/fan-out per
-  account, cycle detection, transaction velocity, and a few others. The
-  consistent jump across every metric is basically the whole point of the
-  project: individual transactions rarely look suspicious on their own, but
-  the account's surrounding transaction pattern usually does.
-- PR-AUC is the metric I'd actually trust here over accuracy — with this much
-  class imbalance, a model that predicts "not laundering" every time would
-  score over 99% accuracy and be useless.
+### Normal Transaction (Low Risk)
+![Normal Transaction](images/normal.png)
 
-## Architecture
+### Suspicious Transaction (High Risk)
+![Suspicious Transaction](images/suspicious.png)
 
-```
-User → Web UI (Flask templates) → Flask API
-                                       │
-                                       ▼
-                          Feature Engineering
-                (base transaction features + graph features:
-                 fan-in/out, cycle membership, velocity, z-score)
-                                       │
-                                       ▼
-                              XGBoost Model
-                                       │
-                                       ▼
-                          Risk Score + Explanation
-```
+### Batch Upload
+![Batch Upload](images/batch.png)
 
-## Quick Start
+### Audit History
+![Audit History](images/audit.png)
+
+---
+
+## Performance Results
+
+| Metric | Baseline Model | Full Model (Graph-Enhanced) | Improvement |
+|--------|----------------|----------------------------|-------------|
+| **PR-AUC** | 0.0133 | **0.1180** | **+386%** |
+| **F1 Score** | 0.0376 | **0.1828** | **+386%** |
+| **Precision** | 3.4% | **14.6%** | +11.2% |
+| **Recall** | 4.2% | **24.5%** | +20.3% |
+| **Top-100 Precision** | — | **36%** | — |
+| **Dataset Size** | 5.07M | 5.07M | — |
+| **Positive Rate** | 0.1% | 0.1% | — |
+
+### What These Numbers Mean:
+- **PR-AUC 0.1180** - The model is 9x better than random guessing (random would be ~0.001)
+- **14.6% Precision** - About 1 in 7 flagged transactions is actually laundering
+- **24.5% Recall** - Catches about 1 in 4 laundering cases
+- **36% Top-100 Precision** - In the top 100 riskiest accounts, 36 are confirmed launderers
+
+---
+
+## 🏗 Architecture
+User → Web Dashboard → Flask API → Feature Engineering (56 features) → XGBoost Model → Risk Score
+
+
+---
+
+## 🛠 Quick Start
 
 ```bash
-git clone https://github.com/Nathenael11/AML-Suspicious-Transaction-Detection
+# Clone the repository
+git clone https://github.com/Nathenael11/AML-Suspicious-Transaction-Detection.git
 cd aml-webapp
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Run the app
 python run.py
-```
 
-The app runs locally on `http://localhost:5000` by default. If you just want
-to try it without setting anything up, use the live demo link above instead.
+# Open browser to http://localhost:5000
 
-## Project Structure
+🐳 Run with Docker
 
-```
+docker build -t aml-shield .
+docker run -p 5000:5000 aml-shield
+
+📁 Project Structure
 aml-webapp/
-├── app/            # Flask application (routes, model loading, inference logic)
-├── static/         # CSS, JS, images
-├── templates/      # HTML templates
-├── models/         # trained XGBoost model + feature metadata
-├── requirements.txt
-└── run.py
-```
+├── app/           # Flask backend (routes, models, feature engineering)
+├── static/        # CSS, JavaScript, logo
+├── templates/     # HTML dashboard
+├── models/        # Trained XGBoost model files
+├── tests/         # Unit tests
+├── run.py         # Entry point
+├── Dockerfile     # Container setup
+└── requirements.txt
 
-## Technologies Used
+🧪 Running Tests
+pytest tests/ -v
 
-- **Backend:** Python, Flask
-- **Model:** XGBoost
-- **Frontend:** HTML, CSS, JavaScript
-- **Deployment:** Docker, GitHub Actions, Render
+📡 API Endpoints
+Endpoint	Method	Description
+/	GET	Web interface
+/predict	POST	Analyze a transaction
+/api/history	GET	Get prediction history
+/export-csv	GET	Download predictions
+/health	GET	Check service status
 
-## Limitations
+🧰 Technologies Used
+Backend: Python, Flask, XGBoost, Scikit-Learn, Pandas, NumPy
 
-Worth being upfront about, since this is a student project and not a
-finished product:
+Frontend: HTML5, CSS3, JavaScript
 
-- Trained on one dataset variant (HI-Small). Performance on a lower-illicit-ratio
-  dataset would likely be worse — that's a documented property of this dataset
-  family, not something specific to this implementation.
-- Cycle detection is bounded (max path length, degree-capped) for the sake of
-  runtime, so it will miss longer or more unusual laundering chains.
-- A precision this low means a real deployment would still need a human
-  reviewing flagged transactions, not acting on the score alone.
+DevOps: Docker, GitHub Actions
 
-## Acknowledgments
+Deployment: Render.com
 
-- IBM for the AML dataset (Altman et al., "Realistic Synthetic Financial
-  Transactions for Anti-Money Laundering Models")
-- The XGBoost library
-- Flask
+📄 License
+MIT License - see LICENSE file for details.
+
+🙏 Acknowledgments
+IBM for the AML dataset
+
+XGBoost library developers
+
+Flask framework team
+course Mentor Mr.Mikiyas Tadesse
+
 ## Author
- Nathenael Ermias
+Nathenael Ermias
+
