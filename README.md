@@ -91,6 +91,7 @@ python run.py
 
 docker build -t aml-shield .
 docker run -p 5000:5000 aml-shield
+---
 
 ## 📁 Project Structure
 aml-webapp/
